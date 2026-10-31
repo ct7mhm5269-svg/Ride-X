@@ -3,38 +3,67 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport"
+content="width=device-width, initial-scale=1">
 <title>RideX</title>
+
 <style>
 * {box-sizing:border-box}
+
 body {
  margin:0;
  font-family:Arial,sans-serif;
  background:#f5f7f6;
  text-align:center;
 }
+
 header {
  background:#00a86b;
  color:white;
- padding:65px 20px;
- border-radius:0 0 30px 30px;
+ padding:35px 20px;
+ border-radius:0 0 25px 25px;
 }
-h1 {font-size:48px;margin:0}
-.container {padding:35px 20px}
-button {
- display:block;
+
+h1 {font-size:42px;margin:0}
+
+.container {padding:25px 20px}
+
+input {
  width:100%;
- padding:20px;
- margin:15px 0;
+ padding:17px;
+ margin:10px 0;
+ border:1px solid #ddd;
+ border-radius:12px;
+ font-size:17px;
+}
+
+button {
+ width:100%;
+ padding:18px;
+ margin:12px 0;
  background:#00a86b;
  color:white;
  border:0;
- border-radius:15px;
- font-size:20px;
+ border-radius:12px;
+ font-size:19px;
+ cursor:pointer;
 }
+
 .driver {background:#222}
+
+.page {display:none}
+.active {display:block}
+
+.card {
+ background:white;
+ padding:20px;
+ border-radius:15px;
+ margin-top:20px;
+ box-shadow:0 3px 12px #0001;
+}
 </style>
 </head>
+
 <body>
 
 <header>
@@ -42,18 +71,117 @@ button {
 <p>مشوارك بالسعر اللي يناسبك</p>
 </header>
 
-<div class="container">
-<h2>أهلا بيك في RideX</h2>
+<div id="home" class="page active container">
+
+<h2>أهلاً بيك في RideX</h2>
 <p>اختار طريقة استخدام التطبيق</p>
 
-<button onclick="alert('مرحبا بك في واجهة العميل')">
+<button onclick="showPage('passenger')">
 أنا عميل
 </button>
 
-<button class="driver" onclick="alert('مرحبا بك في واجهة السواق')">
+<button class="driver"
+onclick="showPage('driver')">
 أنا سواق
 </button>
+
 </div>
+
+<div id="passenger" class="page container">
+
+<h2>اطلب مشوارك</h2>
+
+<div class="card">
+
+<input id="pickup"
+placeholder="مكان الركوب">
+
+<input id="destination"
+placeholder="هتروح فين؟">
+
+<input id="price"
+type="number"
+min="1"
+placeholder="السعر المقترح بالجنيه">
+
+<button onclick="requestRide()">
+اطلب الرحلة
+</button>
+
+</div>
+
+<button class="driver"
+onclick="showPage('home')">
+رجوع
+</button>
+
+</div>
+
+<div id="driver" class="page container">
+
+<h2>واجهة السواق</h2>
+<p>طلبات الرحلات هتظهر هنا قريباً</p>
+
+<button onclick="showPage('home')">
+رجوع للرئيسية
+</button>
+
+</div>
+
+<div id="result" class="page container">
+
+<h2>تم إنشاء طلب الرحلة</h2>
+
+<div class="card">
+<p id="rideDetails"></p>
+<p>دي رحلة تجريبية، لم يتم إرسالها لسواق حقيقي.</p>
+</div>
+
+<button onclick="showPage('home')">
+الرئيسية
+</button>
+
+</div>
+
+<script>
+
+function showPage(id) {
+ document.querySelectorAll('.page')
+ .forEach(page => {
+ page.classList.remove('active');
+ });
+
+ document.getElementById(id)
+ .classList.add('active');
+}
+
+function requestRide() {
+
+ let pickup =
+ document.getElementById('pickup').value.trim();
+
+ let destination =
+ document.getElementById('destination').value.trim();
+
+ let price =
+ Number(document.getElementById('price').value);
+
+ if(!pickup || !destination ||
+ !Number.isFinite(price) || price <= 0) {
+ alert('من فضلك اكتب بيانات الرحلة والسعر بشكل صحيح');
+ return;
+ }
+
+ const details = document.getElementById('rideDetails');
+ details.textContent =
+ 'من: ' + pickup +
+ ' | إلى: ' + destination +
+ ' | السعر: ' + price + ' جنيه';
+
+ showPage('result');
+}
+
+</script>
 
 </body>
 </html>
