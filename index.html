@@ -1,131 +1,30 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>RideX</title>
 
 <style>
-* {
- box-sizing: border-box;
-}
-
-body {
- margin: 0;
- font-family: Arial, sans-serif;
- background: #f5f7f6;
- color: #222;
- text-align: center;
-}
-
-header {
- background: #00a86b;
- color: white;
- padding: 30px 15px;
- border-radius: 0 0 25px 25px;
-}
-
-h1 {
- font-size: 45px;
- margin: 0;
-}
-
-.container {
- padding: 22px;
- max-width: 550px;
- margin: auto;
-}
-
-.page {
- display: none;
-}
-
-.active {
- display: block;
-}
-
-.card {
- background: white;
- padding: 20px;
- margin: 15px 0;
- border-radius: 15px;
- box-shadow: 0 3px 12px #0001;
- text-align: right;
-}
-
-input, select {
- width: 100%;
- padding: 16px;
- margin: 10px 0;
- border: 1px solid #ddd;
- border-radius: 12px;
- font-size: 17px;
- background: white;
-}
-
-button {
- width: 100%;
- padding: 17px;
- margin: 10px 0;
- background: #00a86b;
- color: white;
- border: none;
- border-radius: 12px;
- font-size: 18px;
- cursor: pointer;
-}
-
-button:disabled {
- opacity: .5;
-}
-
-.dark {
- background: #222;
-}
-
-.red {
- background: #d64545;
-}
-
-.vehicle-grid {
- display: grid;
- grid-template-columns: repeat(2, 1fr);
- gap: 10px;
- margin: 15px 0;
-}
-
-.vehicle {
- background: white;
- border: 2px solid #ddd;
- border-radius: 12px;
- padding: 15px 5px;
- cursor: pointer;
-}
-
-.vehicle span {
- display: block;
- font-size: 29px;
- margin-bottom: 8px;
-}
-
-.vehicle.selected {
- border-color: #00a86b;
- background: #e5fff3;
-}
-
-.small {
- color: #777;
- font-size: 14px;
- line-height: 1.6;
-}
-
-.price {
- color: #00a86b;
- font-size: 25px;
- font-weight: bold;
-}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f5f7f6;color:#222;text-align:center}
+header{background:#00a86b;color:#fff;padding:25px 15px;border-radius:0 0 25px 25px}
+h1{font-size:42px;margin:0}
+.container{padding:20px;max-width:580px;margin:auto}
+.page{display:none}.active{display:block}
+.card{background:#fff;padding:18px;margin:14px 0;border-radius:15px;box-shadow:0 3px 12px #0001;text-align:right}
+input,select{width:100%;padding:15px;margin:9px 0;border:1px solid #ddd;border-radius:12px;font-size:16px;background:#fff}
+button{width:100%;padding:15px;margin:8px 0;background:#00a86b;color:#fff;border:0;border-radius:12px;font-size:17px;cursor:pointer}
+button:disabled{opacity:.5}
+.dark{background:#333}
+.red{background:#d64545}
+.vehicle-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:14px 0}
+.vehicle{background:#fff;border:2px solid #ddd;border-radius:12px;padding:13px 5px;cursor:pointer}
+.vehicle span{display:block;font-size:27px;margin-bottom:7px}
+.vehicle.selected{border-color:#00a86b;background:#e5fff3}
+.small{color:#777;font-size:13px;line-height:1.6}
+.price{color:#00a86b;font-size:24px;font-weight:bold}
+.hidden{display:none!important}
 </style>
 </head>
 
@@ -136,25 +35,69 @@ button:disabled {
 <p>مشوارك بالسعر اللي يناسبك</p>
 </header>
 
-<!-- الرئيسية -->
+<!-- تسجيل الحساب -->
 
-<div id="home" class="page active container">
+<div id="auth" class="page active container">
 
 <h2>أهلاً بيك في RideX</h2>
 
-<p>اختار طريقة استخدام التطبيق</p>
+<div class="card">
 
-<button onclick="showPage('passenger')">
-أنا عميل
+<h3 id="authTitle">إنشاء حساب جديد</h3>
+
+<input id="fullName" placeholder="الاسم" autocomplete="name">
+
+<input id="email" type="email" placeholder="البريد الإلكتروني" autocomplete="email">
+
+<input id="password" type="password" placeholder="كلمة المرور (6 أحرف على الأقل)" autocomplete="current-password">
+
+<select id="accountRole">
+<option value="customer">عميل</option>
+<option value="driver">سائق</option>
+</select>
+
+<div id="driverVehicleWrap" class="hidden">
+<label>نوع مركبتك</label>
+<select id="registerVehicle"></select>
+</div>
+
+<button id="authButton" onclick="registerAccount()">
+إنشاء حساب
 </button>
 
-<button class="dark" onclick="showDriver()">
-أنا سواق
+<button class="dark" id="toggleAuth" onclick="toggleAuthMode()">
+لدي حساب بالفعل - تسجيل الدخول
 </button>
 
 <p class="small">
-نسخة تجريبية من تطبيق RideX
+استخدم بريدًا إلكترونيًا حقيقيًا وكلمة مرور قوية.
 </p>
+
+</div>
+
+<p id="authMessage" class="small"></p>
+
+</div>
+
+<!-- الصفحة الرئيسية -->
+
+<div id="home" class="page container">
+
+<h2 id="welcome"></h2>
+
+<p id="roleLabel"></p>
+
+<button id="customerButton" onclick="showPage('passenger')">
+اطلب مشوار
+</button>
+
+<button id="driverButton" class="dark" onclick="openDriver()">
+طلبات الرحلات
+</button>
+
+<button class="red" onclick="logout()">
+تسجيل الخروج
+</button>
 
 </div>
 
@@ -172,16 +115,11 @@ button:disabled {
 
 <h3>تفاصيل الرحلة</h3>
 
-<input id="pickup"
-placeholder="مكان الركوب">
+<input id="pickup" placeholder="مكان الركوب">
 
-<input id="destination"
-placeholder="مكان الوصول">
+<input id="destination" placeholder="مكان الوصول">
 
-<input id="price"
-type="number"
-min="1"
-placeholder="السعر المقترح بالجنيه">
+<input id="price" type="number" min="1" placeholder="السعر المقترح بالجنيه">
 
 <button onclick="requestRide()">
 اطلب الرحلة
@@ -195,7 +133,7 @@ placeholder="السعر المقترح بالجنيه">
 
 </div>
 
-<!-- شاشة انتظار العروض -->
+<!-- انتظار العروض -->
 
 <div id="waiting" class="page container">
 
@@ -205,14 +143,14 @@ placeholder="السعر المقترح بالجنيه">
 
 <div id="rideInfo"></div>
 
-<h3>عروض السواقين</h3>
+<h3>عروض السائقين</h3>
 
-<div id="offersList"></div>
+<div id="offersList">جاري تحميل العروض...</div>
 
 </div>
 
 <button class="dark" onclick="showPage('home')">
-الصفحة الرئيسية
+الرئيسية
 </button>
 
 <button class="red" onclick="cancelRide()">
@@ -221,25 +159,33 @@ placeholder="السعر المقترح بالجنيه">
 
 </div>
 
-<!-- واجهة السواق -->
+<!-- واجهة السائق -->
 
 <div id="driver" class="page container">
 
-<h2>واجهة السواق</h2>
+<h2>طلبات الرحلات المناسبة</h2>
 
 <div class="card">
 
-<h3>نوع مركبتك</h3>
+<label>نوع مركبتك</label>
 
-<select id="driverVehicle"></select>
+<select id="driverVehicle" onchange="renderDriverRequests()"></select>
 
-<button onclick="showDriver()">
-عرض الطلبات المناسبة
-</button>
+<div id="driverRequests">
+جاري تحميل الطلبات...
+</div>
 
 </div>
 
-<div id="driverRequests"></div>
+<div class="card">
+
+<h3>رحلات تم قبول عرضك فيها</h3>
+
+<div id="assignedRides">
+لا توجد رحلات حالية
+</div>
+
+</div>
 
 <button class="dark" onclick="showPage('home')">
 الرئيسية
@@ -247,7 +193,7 @@ placeholder="السعر المقترح بالجنيه">
 
 </div>
 
-<!-- شاشة الرحلة المقبولة -->
+<!-- تفاصيل الرحلة -->
 
 <div id="trip" class="page container">
 
@@ -255,7 +201,7 @@ placeholder="السعر المقترح بالجنيه">
 
 <div class="card" id="tripDetails"></div>
 
-<button onclick="finishRide()">
+<button id="finishButton" onclick="finishRide()">
 إنهاء الرحلة
 </button>
 
@@ -265,470 +211,1061 @@ placeholder="السعر المقترح بالجنيه">
 
 </div>
 
-<script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+onAuthStateChanged,
+signOut
+} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+import {
+getFirestore,
+doc,
+setDoc,
+getDoc,
+collection,
+addDoc,
+onSnapshot,
+query,
+where,
+updateDoc,
+serverTimestamp
+} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+
+// إعداد Firebase
+
+const firebaseConfig = {
+apiKey: "AIzaSyCmvxDgpYkY7-oxAKRVHdqDQtVfgkMDWpY",
+authDomain: "ride-x-99d45.firebaseapp.com",
+projectId: "ride-x-99d45",
+storageBucket: "ride-x-99d45.firebasestorage.app",
+messagingSenderId: "191144797641",
+appId: "1:191144797641:web:50c2209c71a0d1dcb37418",
+measurementId: "G-1PGLHJ5RWC"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
 
 // أنواع المركبات
 
 const vehicles = [
- {id:"car",name:"ملاكي",icon:"🚗"},
- {id:"taxi",name:"تاكسي",icon:"🚕"},
- {id:"motorcycle",name:"موتوسيكل",icon:"🏍️"},
- {id:"scooter",name:"سكوتر",icon:"🛵"},
- {id:"tuktuk",name:"توك توك",icon:"🛺"},
- {id:"microbus",name:"ميكروباص",icon:"🚐"},
- {id:"van",name:"فان",icon:"🚐"},
- {id:"minibus",name:"ميني باص",icon:"🚌"},
- {id:"bus",name:"أتوبيس",icon:"🚌"},
- {id:"pickup",name:"نصف نقل",icon:"🛻"},
- {id:"truck",name:"نقل",icon:"🚚"},
- {id:"heavy",name:"نقل ثقيل",icon:"🚛"},
- {id:"cold",name:"نقل مبرد",icon:"🚛"},
- {id:"tow",name:"ونش إنقاذ",icon:"🚨"}
+
+{id:"car",name:"ملاكي",icon:"🚗"},
+{id:"taxi",name:"تاكسي",icon:"🚕"},
+{id:"motorcycle",name:"موتوسيكل",icon:"🏍️"},
+{id:"scooter",name:"سكوتر",icon:"🛵"},
+{id:"tuktuk",name:"توك توك",icon:"🛺"},
+{id:"microbus",name:"ميكروباص",icon:"🚐"},
+{id:"van",name:"فان",icon:"🚐"},
+{id:"minibus",name:"ميني باص",icon:"🚌"},
+{id:"bus",name:"أتوبيس",icon:"🚌"},
+{id:"pickup",name:"نصف نقل",icon:"🛻"},
+{id:"truck",name:"نقل",icon:"🚚"},
+{id:"heavy",name:"نقل ثقيل",icon:"🚛"},
+{id:"cold",name:"نقل مبرد",icon:"🚛"},
+{id:"tow",name:"ونش إنقاذ",icon:"🚨"}
+
 ];
 
+
+// المتغيرات
+
+let currentUser = null;
+let profile = null;
 let selectedVehicle = null;
 
-const STORAGE_KEY = "ridex_demo_v4";
+let currentRideId = null;
+let currentRide = null;
 
-function loadRide() {
- try {
-  return JSON.parse(localStorage.getItem(STORAGE_KEY));
- } catch(e) {
-  return null;
- }
-}
+let offersCache = [];
 
-let ride = loadRide();
+let authMode = "register";
 
-function saveRide() {
- if (ride) {
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(ride));
- } else {
-  localStorage.removeItem(STORAGE_KEY);
- }
-}
+let unsubscribeRide = null;
+let unsubscribeOffers = null;
+let unsubscribeDriverRequests = null;
+let unsubscribeAssigned = null;
 
-function vehicleName(id) {
- const v = vehicles.find(x => x.id === id);
- return v ? v.icon + " " + v.name : "غير محدد";
-}
+const $ = id => document.getElementById(id);
+
 
 // التنقل بين الصفحات
 
-function showPage(id) {
+function showPage(id){
 
- document.querySelectorAll(".page").forEach(p => {
-  p.classList.remove("active");
- });
+document.querySelectorAll(".page").forEach(p=>{
+p.classList.remove("active");
+});
 
- document.getElementById(id).classList.add("active");
+$(id).classList.add("active");
 
- window.scrollTo(0,0);
-}
-
-// عرض أنواع المركبات
-
-function renderVehicles() {
-
- const list = document.getElementById("vehicleList");
- list.innerHTML = "";
-
- vehicles.forEach(v => {
-
-  const item = document.createElement("div");
-
-  item.className = "vehicle";
-  item.dataset.id = v.id;
-
-  item.innerHTML =
-   "<span>" + v.icon + "</span>" + v.name;
-
-  item.onclick = () => selectVehicle(v.id);
-
-  list.appendChild(item);
-
- });
+window.scrollTo(0,0);
 
 }
 
-function selectVehicle(id) {
 
- selectedVehicle = id;
+// اسم المركبة
 
- document.querySelectorAll(".vehicle").forEach(v => {
+function vehicleName(id){
 
-  v.classList.toggle(
-   "selected",
-   v.dataset.id === id
-  );
+const v = vehicles.find(x=>x.id===id);
 
- });
+return v ? `${v.icon} ${v.name}` : "غير محدد";
 
 }
 
-// إنشاء طلب رحلة
 
-function requestRide() {
+// رسائل الحساب
 
- const pickup =
- document.getElementById("pickup").value.trim();
+function setMessage(message){
 
- const destination =
- document.getElementById("destination").value.trim();
-
- const priceText =
- document.getElementById("price").value.trim();
-
- const price = Number(priceText);
-
- if (!selectedVehicle) {
-  alert("اختار نوع المركبة الأول");
-  return;
- }
-
- if (!pickup || !destination) {
-  alert("اكتب مكان الركوب والوصول");
-  return;
- }
-
- if (!priceText || !Number.isFinite(price) || price <= 0) {
-  alert("اكتب سعر صحيح");
-  return;
- }
-
- if (ride && ride.status !== "finished" &&
-     ride.status !== "cancelled") {
-  alert("عندك رحلة حالية. انهيها أو الغيها الأول");
-  return;
- }
-
- ride = {
-  id: Date.now(),
-  vehicle: selectedVehicle,
-  pickup: pickup,
-  destination: destination,
-  price: price,
-  offers: [],
-  acceptedOffer: null,
-  status: "waiting"
- };
-
- saveRide();
-
- renderWaiting();
-
- showPage("waiting");
+$("authMessage").textContent = message;
 
 }
 
-// تفاصيل الطلب
 
-function renderWaiting() {
+// تجهيز المركبات
 
- if (!ride) {
-  showPage("home");
-  return;
- }
+function fillVehicleSelects(){
 
- const info = document.getElementById("rideInfo");
+$("registerVehicle").innerHTML="";
+$("driverVehicle").innerHTML="";
 
- info.innerHTML = "";
+vehicles.forEach(v=>{
 
- const title = document.createElement("h3");
- title.textContent = vehicleName(ride.vehicle);
+for(const select of [
+$("registerVehicle"),
+$("driverVehicle")
+]){
 
- const from = document.createElement("p");
- from.textContent = "من: " + ride.pickup;
+const option=document.createElement("option");
 
- const to = document.createElement("p");
- to.textContent = "إلى: " + ride.destination;
+option.value=v.id;
 
- const price = document.createElement("p");
- price.className = "price";
- price.textContent = ride.price + " جنيه";
+option.textContent=`${v.icon} ${v.name}`;
 
- info.append(title,from,to,price);
-
- const list = document.getElementById("offersList");
-
- list.innerHTML = "";
-
- if (ride.status === "accepted") {
-  renderTrip();
-  showPage("trip");
-  return;
- }
-
- if (!ride.offers.length) {
-  list.textContent = "لسه مفيش عروض";
-  return;
- }
-
- ride.offers.forEach(offer => {
-
-  const card = document.createElement("div");
-  card.className = "card";
-
-  const name = document.createElement("h3");
-  name.textContent = "عرض سواق";
-
-  const amount = document.createElement("p");
-  amount.className = "price";
-  amount.textContent = offer.price + " جنيه";
-
-  const accept = document.createElement("button");
-  accept.textContent = "قبول العرض";
-  accept.onclick = () => acceptOffer(offer.id);
-
-  const reject = document.createElement("button");
-  reject.className = "red";
-  reject.textContent = "رفض العرض";
-  reject.onclick = () => rejectOffer(offer.id);
-
-  card.append(name,amount,accept,reject);
-  list.appendChild(card);
-
- });
+select.appendChild(option);
 
 }
 
-// واجهة السواق
+});
 
-function setupDriverVehicles() {
+$("vehicleList").innerHTML="";
 
- const select = document.getElementById("driverVehicle");
+vehicles.forEach(v=>{
 
- vehicles.forEach(v => {
+const item=document.createElement("div");
 
-  const option = document.createElement("option");
+item.className="vehicle";
 
-  option.value = v.id;
-  option.textContent = v.icon + " " + v.name;
+item.dataset.id=v.id;
 
-  select.appendChild(option);
+item.innerHTML=`<span>${v.icon}</span>${v.name}`;
 
- });
+item.onclick=()=>selectVehicle(v.id);
 
-}
+$("vehicleList").appendChild(item);
 
-function showDriver() {
-
- showPage("driver");
-
- const type =
- document.getElementById("driverVehicle").value;
-
- const area =
- document.getElementById("driverRequests");
-
- area.innerHTML = "";
-
- if (!ride || ride.status !== "waiting") {
-
-  area.innerHTML =
-  '<div class="card">لا توجد طلبات متاحة حاليًا</div>';
-
-  return;
- }
-
- if (ride.vehicle !== type) {
-
-  area.innerHTML =
-  '<div class="card">لا توجد طلبات مناسبة لنوع مركبتك</div>';
-
-  return;
- }
-
- const card = document.createElement("div");
- card.className = "card";
-
- const heading = document.createElement("h3");
- heading.textContent = "طلب رحلة جديد";
-
- const details = document.createElement("p");
- details.textContent =
-  vehicleName(ride.vehicle) +
-  " | من: " + ride.pickup +
-  " | إلى: " + ride.destination;
-
- const amount = document.createElement("p");
- amount.className = "price";
- amount.textContent = ride.price + " جنيه";
-
- const accept = document.createElement("button");
- accept.textContent = "قبول سعر العميل";
- accept.onclick = () => submitOffer(true);
-
- const input = document.createElement("input");
- input.id = "offerPrice";
- input.type = "number";
- input.min = "1";
- input.placeholder = "اكتب سعرك المقترح";
-
- const send = document.createElement("button");
- send.className = "dark";
- send.textContent = "إرسال عرض جديد";
- send.onclick = () => submitOffer(false);
-
- card.append(heading,details,amount,accept,input,send);
-
- area.appendChild(card);
+});
 
 }
 
-// تقديم عرض
 
-function submitOffer(samePrice) {
+// اختيار المركبة
 
- if (!ride || ride.status !== "waiting") return;
+function selectVehicle(id){
 
- const type =
- document.getElementById("driverVehicle").value;
+selectedVehicle=id;
 
- if (type !== ride.vehicle) {
-  alert("نوع المركبة غير مطابق لطلب العميل");
-  return;
- }
+document.querySelectorAll(".vehicle").forEach(el=>{
 
- const input = document.getElementById("offerPrice");
+el.classList.toggle(
+"selected",
+el.dataset.id===id
+);
 
- const price = samePrice
-  ? ride.price
-  : Number(input.value);
-
- if (!samePrice &&
-     (!input.value.trim() ||
-      !Number.isFinite(price) ||
-      price <= 0)) {
-  alert("اكتب سعر صحيح");
-  return;
- }
-
- const offer = {
-  id: Date.now(),
-  price: price
- };
-
- ride.offers.push(offer);
-
- saveRide();
-
- alert("تم إرسال العرض بنجاح");
-
- showPage("home");
+});
 
 }
+
+
+// التبديل بين التسجيل والدخول
+
+function toggleAuthMode(){
+
+authMode=authMode==="register"?"login":"register";
+
+$("authTitle").textContent=
+authMode==="register"?"إنشاء حساب جديد":"تسجيل الدخول";
+
+$("authButton").textContent=
+authMode==="register"?"إنشاء حساب":"دخول";
+
+$("toggleAuth").textContent=
+authMode==="register"
+?"لدي حساب بالفعل - تسجيل الدخول"
+:"ليس لدي حساب - إنشاء حساب";
+
+$("fullName").classList.toggle("hidden",authMode==="login");
+
+$("accountRole").classList.toggle("hidden",authMode==="login");
+
+$("driverVehicleWrap").classList.add("hidden");
+
+setMessage("");
+
+}
+
+
+$("accountRole").addEventListener("change",()=>{
+
+$("driverVehicleWrap").classList.toggle(
+"hidden",
+$("accountRole").value!=="driver"
+);
+
+});
+
+
+// إنشاء حساب أو تسجيل الدخول
+
+window.registerAccount=async function(){
+
+const email=$("email").value.trim();
+
+const password=$("password").value;
+
+const name=$("fullName").value.trim();
+
+const role=$("accountRole").value;
+
+if(!email||!password){
+
+setMessage("اكتب البريد الإلكتروني وكلمة المرور.");
+
+return;
+
+}
+
+if(password.length<6){
+
+setMessage("كلمة المرور لازم تكون 6 أحرف على الأقل.");
+
+return;
+
+}
+
+try{
+
+$("authButton").disabled=true;
+
+setMessage("جاري التنفيذ...");
+
+if(authMode==="register"){
+
+if(!name){
+
+setMessage("اكتب اسمك.");
+
+return;
+
+}
+
+const cred=await createUserWithEmailAndPassword(
+auth,email,password
+);
+
+const userData={
+name,
+email,
+role,
+createdAt:serverTimestamp()
+};
+
+if(role==="driver"){
+
+userData.vehicle=$("registerVehicle").value;
+
+}
+
+await setDoc(
+doc(db,"users",cred.user.uid),
+userData
+);
+
+setMessage("تم إنشاء الحساب.");
+
+}else{
+
+await signInWithEmailAndPassword(
+auth,email,password
+);
+
+}
+
+}catch(error){
+
+setMessage(firebaseError(error));
+
+}finally{
+
+$("authButton").disabled=false;
+
+}
+
+};
+
+
+// معالجة أخطاء Firebase
+
+function firebaseError(error){
+
+const map={
+
+"auth/email-already-in-use":"البريد الإلكتروني مستخدم بالفعل.",
+
+"auth/invalid-email":"البريد الإلكتروني غير صحيح.",
+
+"auth/weak-password":"كلمة المرور ضعيفة.",
+
+"auth/user-not-found":"لا يوجد حساب بهذا البريد.",
+
+"auth/wrong-password":"كلمة المرور غير صحيحة.",
+
+"auth/invalid-credential":"بيانات الدخول غير صحيحة.",
+
+"auth/network-request-failed":"تحقق من اتصال الإنترنت.",
+
+"permission-denied":"صلاحيات قاعدة البيانات تمنع العملية. راجع Rules."
+
+};
+
+return map[error.code]||`حدث خطأ: ${error.message}`;
+
+}
+
+
+// إيقاف الاستماع القديم
+
+function clearListeners(){
+
+[
+unsubscribeRide,
+unsubscribeOffers,
+unsubscribeDriverRequests,
+unsubscribeAssigned
+].forEach(fn=>{
+
+if(fn)fn();
+
+});
+
+unsubscribeRide=null;
+unsubscribeOffers=null;
+unsubscribeDriverRequests=null;
+unsubscribeAssigned=null;
+
+}
+
+
+// متابعة تسجيل الدخول
+
+onAuthStateChanged(auth,async user=>{
+
+clearListeners();
+
+currentUser=user;
+
+profile=null;
+
+currentRideId=null;
+
+currentRide=null;
+
+if(!user){
+
+showPage("auth");
+
+return;
+
+}
+
+try{
+
+let snap=null;
+
+for(let attempt=0;attempt<6;attempt++){
+
+snap=await getDoc(doc(db,"users",user.uid));
+
+if(snap.exists())break;
+
+await new Promise(resolve=>setTimeout(resolve,300));
+
+}
+
+if(!snap||!snap.exists()){
+
+await signOut(auth);
+
+setMessage("لم يتم العثور على ملف الحساب. حاول تسجيل الدخول مرة أخرى.");
+
+return;
+
+}
+
+profile=snap.data();
+
+$("welcome").textContent=`أهلاً ${profile.name||""}`;
+
+$("roleLabel").textContent=
+profile.role==="driver"?"حساب سائق":"حساب عميل";
+
+$("customerButton").classList.toggle(
+"hidden",
+profile.role!=="customer"
+);
+
+$("driverButton").classList.toggle(
+"hidden",
+profile.role!=="driver"
+);
+
+if(profile.role==="driver"){
+
+$("driverVehicle").value=profile.vehicle||"car";
+
+}
+
+showPage("home");
+
+}catch(error){
+
+alert(firebaseError(error));
+
+showPage("auth");
+
+}
+
+});
+
+
+// تسجيل الخروج
+
+window.logout=async function(){
+
+clearListeners();
+
+await signOut(auth);
+
+};
+
+
+// طلب رحلة جديد
+
+window.requestRide=async function(){
+
+if(!currentUser||profile?.role!=="customer")return;
+
+const pickup=$("pickup").value.trim();
+
+const destination=$("destination").value.trim();
+
+const price=Number($("price").value);
+
+if(!selectedVehicle){
+
+alert("اختار نوع المركبة الأول.");
+
+return;
+
+}
+
+if(!pickup||!destination){
+
+alert("اكتب مكان الركوب والوصول.");
+
+return;
+
+}
+
+if(!Number.isFinite(price)||price<=0){
+
+alert("اكتب سعرًا صحيحًا.");
+
+return;
+
+}
+
+try{
+
+const ref=await addDoc(collection(db,"rides"),{
+
+customerId:currentUser.uid,
+
+vehicle:selectedVehicle,
+
+pickup,
+
+destination,
+
+price,
+
+status:"waiting",
+
+createdAt:serverTimestamp(),
+
+driverId:null,
+
+acceptedOffer:null
+
+});
+
+currentRideId=ref.id;
+
+listenToRide(ref.id);
+
+showPage("waiting");
+
+}catch(error){
+
+alert(firebaseError(error));
+
+}
+
+};
+
+
+// متابعة الرحلة لحظيًا
+
+function listenToRide(rideId){
+
+if(unsubscribeRide)unsubscribeRide();
+
+if(unsubscribeOffers)unsubscribeOffers();
+
+unsubscribeRide=onSnapshot(
+doc(db,"rides",rideId),
+snap=>{
+
+if(!snap.exists()){
+
+alert("الرحلة لم تعد موجودة.");
+
+showPage("home");
+
+return;
+
+}
+
+currentRide={id:snap.id,...snap.data()};
+
+renderWaiting();
+
+if(currentRide.status==="accepted"){
+
+renderTrip();
+
+}
+
+if(currentRide.status==="finished"){
+
+alert("تم إنهاء الرحلة.");
+
+showPage("home");
+
+}
+
+if(currentRide.status==="cancelled"){
+
+alert("تم إلغاء الرحلة.");
+
+showPage("home");
+
+}
+
+},
+error=>alert(firebaseError(error))
+);
+
+unsubscribeOffers=onSnapshot(
+collection(db,"rides",rideId,"offers"),
+snap=>{
+
+offersCache=snap.docs.map(d=>({
+id:d.id,
+...d.data()
+}));
+
+renderOffers();
+
+},
+error=>alert(firebaseError(error))
+);
+
+}
+
+
+// عرض تفاصيل الطلب
+
+function renderWaiting(){
+
+if(!currentRide)return;
+
+$("rideInfo").innerHTML="";
+
+const lines=[
+
+vehicleName(currentRide.vehicle),
+
+`من: ${currentRide.pickup}`,
+
+`إلى: ${currentRide.destination}`,
+
+`السعر المقترح: ${currentRide.price} جنيه`,
+
+`الحالة: ${currentRide.status==="waiting"?"في انتظار العروض":currentRide.status}`
+
+];
+
+lines.forEach(t=>{
+
+const p=document.createElement("p");
+
+p.textContent=t;
+
+$("rideInfo").appendChild(p);
+
+});
+
+if(currentRide.status==="accepted"){
+
+showPage("trip");
+
+}
+
+}
+
+
+// عرض العروض
+
+function renderOffers(){
+
+$("offersList").innerHTML="";
+
+if(!offersCache.length){
+
+$("offersList").textContent="لسه مفيش عروض. استنى شوية.";
+
+return;
+
+}
+
+offersCache.forEach(offer=>{
+
+const card=document.createElement("div");
+
+card.className="card";
+
+const title=document.createElement("h3");
+
+title.textContent="عرض سائق";
+
+const amount=document.createElement("p");
+
+amount.className="price";
+
+amount.textContent=`${offer.price} جنيه`;
+
+card.append(title,amount);
+
+if(currentRide?.status==="waiting"){
+
+const accept=document.createElement("button");
+
+accept.textContent="قبول العرض";
+
+accept.onclick=()=>acceptOffer(offer);
+
+card.appendChild(accept);
+
+}
+
+$("offersList").appendChild(card);
+
+});
+
+}
+
 
 // قبول عرض
 
-function acceptOffer(id) {
+window.acceptOffer=async function(offer){
 
- if (!ride || ride.status !== "waiting") return;
+if(!currentRideId||currentRide?.status!=="waiting")return;
 
- const offer = ride.offers.find(o => o.id === id);
+try{
 
- if (!offer) return;
+await updateDoc(
+doc(db,"rides",currentRideId),
+{
 
- ride.acceptedOffer = offer;
- ride.status = "accepted";
+status:"accepted",
 
- saveRide();
+driverId:offer.driverId,
 
- renderTrip();
+acceptedOffer:{
 
- showPage("trip");
+offerId:offer.id,
+
+driverId:offer.driverId,
+
+price:offer.price
+
+},
+
+acceptedAt:serverTimestamp()
+
+}
+);
+
+}catch(error){
+
+alert(firebaseError(error));
 
 }
 
-// رفض عرض
+};
 
-function rejectOffer(id) {
 
- if (!ride || ride.status !== "waiting") return;
+// إلغاء الرحلة
 
- ride.offers = ride.offers.filter(o => o.id !== id);
+window.cancelRide=async function(){
 
- saveRide();
+if(!currentRideId||currentRide?.status!=="waiting")return;
 
- renderWaiting();
+if(!confirm("هل تريد إلغاء الطلب؟"))return;
+
+try{
+
+await updateDoc(
+doc(db,"rides",currentRideId),
+{
+
+status:"cancelled",
+
+cancelledAt:serverTimestamp()
+
+}
+);
+
+}catch(error){
+
+alert(firebaseError(error));
 
 }
 
-// تفاصيل الرحلة
+};
 
-function renderTrip() {
 
- if (!ride || !ride.acceptedOffer) return;
+// واجهة السائق
 
- const box = document.getElementById("tripDetails");
+window.openDriver=function(){
 
- box.innerHTML = "";
+showPage("driver");
 
- const lines = [
-  vehicleName(ride.vehicle),
-  "من: " + ride.pickup,
-  "إلى: " + ride.destination,
-  "السعر المتفق عليه: " +
-   ride.acceptedOffer.price + " جنيه",
-  "حالة الرحلة: تم قبول العرض"
- ];
+if(unsubscribeDriverRequests)unsubscribeDriverRequests();
 
- lines.forEach(line => {
-  const p = document.createElement("p");
-  p.textContent = line;
-  box.appendChild(p);
- });
+if(unsubscribeAssigned)unsubscribeAssigned();
+
+const waitingQuery=query(
+collection(db,"rides"),
+where("status","==","waiting")
+);
+
+unsubscribeDriverRequests=onSnapshot(
+waitingQuery,
+snap=>{
+
+window.waitingRides=snap.docs.map(d=>({
+
+id:d.id,
+
+...d.data()
+
+}));
+
+renderDriverRequests();
+
+},
+error=>alert(firebaseError(error))
+);
+
+
+const assignedQuery=query(
+collection(db,"rides"),
+where("driverId","==",currentUser.uid)
+);
+
+unsubscribeAssigned=onSnapshot(
+assignedQuery,
+snap=>{
+
+const area=$("assignedRides");
+
+area.innerHTML="";
+
+const rides=snap.docs.map(d=>({
+
+id:d.id,
+
+...d.data()
+
+})).filter(r=>r.status==="accepted");
+
+if(!rides.length){
+
+area.textContent="لا توجد رحلات مقبولة حاليًا.";
+
+return;
 
 }
+
+rides.forEach(r=>{
+
+const b=document.createElement("button");
+
+b.textContent=`${r.pickup} ← ${r.destination}`;
+
+b.onclick=()=>{
+
+currentRideId=r.id;
+
+currentRide=r;
+
+renderTrip();
+
+showPage("trip");
+
+};
+
+area.appendChild(b);
+
+});
+
+},
+error=>alert(firebaseError(error))
+);
+
+};
+
+
+// عرض الطلبات المناسبة للسائق
+
+window.renderDriverRequests=function(){
+
+const area=$("driverRequests");
+
+area.innerHTML="";
+
+const type=$("driverVehicle").value;
+
+const rides=(window.waitingRides||[]).filter(
+r=>r.vehicle===type
+);
+
+if(!rides.length){
+
+area.textContent="لا توجد طلبات مناسبة حاليًا.";
+
+return;
+
+}
+
+rides.forEach(r=>{
+
+const card=document.createElement("div");
+
+card.className="card";
+
+const title=document.createElement("h3");
+
+title.textContent=vehicleName(r.vehicle);
+
+const details=document.createElement("p");
+
+details.textContent=
+`من: ${r.pickup} — إلى: ${r.destination}`;
+
+const amount=document.createElement("p");
+
+amount.className="price";
+
+amount.textContent=
+`السعر المقترح: ${r.price} جنيه`;
+
+const input=document.createElement("input");
+
+input.type="number";
+
+input.min="1";
+
+input.placeholder="اكتب عرضك بالجنيه";
+
+const send=document.createElement("button");
+
+send.textContent="إرسال العرض";
+
+send.onclick=()=>submitOffer(r,input.value);
+
+card.append(title,details,amount,input,send);
+
+area.appendChild(card);
+
+});
+
+};
+
+
+// إرسال عرض سعر
+
+async function submitOffer(rideData,value){
+
+const price=Number(value);
+
+if(!Number.isFinite(price)||price<=0){
+
+alert("اكتب سعرًا صحيحًا.");
+
+return;
+
+}
+
+try{
+
+await addDoc(
+collection(db,"rides",rideData.id,"offers"),
+{
+
+driverId:currentUser.uid,
+
+price,
+
+createdAt:serverTimestamp()
+
+}
+);
+
+alert("تم إرسال العرض للعميل.");
+
+}catch(error){
+
+alert(firebaseError(error));
+
+}
+
+}
+
+
+// تفاصيل الرحلة المقبولة
+
+function renderTrip(){
+
+if(!currentRide)return;
+
+$("tripDetails").innerHTML="";
+
+const accepted=currentRide.acceptedOffer||{};
+
+[
+
+vehicleName(currentRide.vehicle),
+
+`من: ${currentRide.pickup}`,
+
+`إلى: ${currentRide.destination}`,
+
+`السعر المتفق عليه: ${accepted.price??currentRide.price} جنيه`,
+
+`حالة الرحلة: ${currentRide.status}`
+
+].forEach(line=>{
+
+const p=document.createElement("p");
+
+p.textContent=line;
+
+$("tripDetails").appendChild(p);
+
+});
+
+const canFinish =
+currentRide.status==="accepted" &&
+(
+(profile?.role==="customer" &&
+currentRide.customerId===currentUser?.uid)
+||
+(profile?.role==="driver" &&
+currentRide.driverId===currentUser?.uid)
+);
+
+$("finishButton").classList.toggle("hidden",!canFinish);
+
+}
+
 
 // إنهاء الرحلة
 
-function finishRide() {
+window.finishRide=async function(){
 
- if (!ride || ride.status !== "accepted") return;
+if(!currentRideId||currentRide?.status!=="accepted")return;
 
- ride.status = "finished";
- saveRide();
+const isCustomer =
+profile?.role==="customer" &&
+currentRide.customerId===currentUser?.uid;
 
- alert("تم إنهاء الرحلة بنجاح");
+const isAssignedDriver =
+profile?.role==="driver" &&
+currentRide.driverId===currentUser?.uid;
 
- ride = null;
- saveRide();
+if(!isCustomer&&!isAssignedDriver)return;
 
- showPage("home");
+try{
+
+await updateDoc(
+doc(db,"rides",currentRideId),
+{
+
+status:"finished",
+
+finishedAt:serverTimestamp()
+
+}
+);
+
+}catch(error){
+
+alert(firebaseError(error));
 
 }
 
-// إلغاء الطلب
+};
 
-function cancelRide() {
-
- if (!ride || ride.status !== "waiting") return;
-
- if (!confirm("هل تريد إلغاء الطلب؟")) return;
-
- ride = null;
-
- saveRide();
-
- showPage("home");
-
-}
 
 // تشغيل التطبيق
 
-renderVehicles();
-setupDriverVehicles();
-
-if (ride) {
- if (ride.status === "waiting") {
-  renderWaiting();
-  showPage("waiting");
- } else if (ride.status === "accepted") {
-  renderTrip();
-  showPage("trip");
- }
-}
+fillVehicleSelects();
 
 </script>
 
